@@ -51,7 +51,7 @@ class SliderArrowPainter extends CustomPainter {
     final gradient = SweepGradient(
       startAngle: startRadian,
       endAngle: startRadian + lengthRadian,
-      colors: [color.withOpacity(0.0), color],
+      colors: [const Color(0x00FFFFFF), color],
     );
 
     final trackPaint = Paint()

@@ -1,7 +1,8 @@
 name: circular_slider
-description: "A customizable circular slider for Flutter."
+description: "A circular slider for Flutter with customizable segments, markers, and notches."
 version: 0.0.1
 homepage: https://github.com/nikhilbawane/circular_slider
+repository: https://github.com/nikhilbawane/circular_slider
 
 environment:
   sdk: '>=3.3.1 <4.0.0'
