@@ -88,8 +88,9 @@ Segments can help you display different value ranges on your Slider.
 
 #### CircularSliderMarker
 
-Markers help indicate a position on your Slider. You can use an Icon or any other Widget.
-Use [lockRotation] to make the marker follow the Slider's path.
+Markers help indicate a position on your Slider. You can use an Icon or any other Widget.  
+Use `lockRotation` to make the marker follow the Slider's path.  
+This depends on the value of `CircularSlider.steps` parameter if you use `stepIndex`.
 
 | Parameter | DataType | Description |
 | ------ | ------ | ------ |
@@ -103,7 +104,7 @@ Use [lockRotation] to make the marker follow the Slider's path.
 
 Notches are minimalistic indicators for you Slider. 
 
-This depends on the value of [CircularSlider.steps] parameter if you use [stepIndex] your notches.
+This also depends on the value of `CircularSlider.steps` parameter if you use `stepIndex`.
 
 | Parameter | DataType | Description |
 | ------ | ------ | ------ |
@@ -113,6 +114,8 @@ This depends on the value of [CircularSlider.steps] parameter if you use [stepIn
 | value | double? | The value where this group should be positioned. To use this, stepIndex must be null. |
 
 #### CircularSliderNotch
+
+An individual notch in you notch group.
 
 | Parameter | DataType | Description |
 | ------ | ------ | ------ |
