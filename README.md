@@ -20,7 +20,7 @@ Add
 
 ```
 dependencies:
-  circular_slider: ^1.0.0
+  circular_slider: ^0.0.3
 ```
 
 to your `pubspec.yaml`, and run
