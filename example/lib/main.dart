@@ -42,23 +42,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    CircularSlider(
-      value: _value,
-      startAngle: 0.0,
-      endAngle: 3.141,
-      radius: 160,
-      knobBuilder: (context, angle) {
-        return const Card(
-          color: Colors.blue,
-          shape: CircleBorder(),
-        );
-      },
-      onChanged: (value) {
-        setState(() {
-          _value = value;
-        });
-      },
-    );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -69,25 +52,114 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Center(
               child: CircularSlider(
-                startAngle: 0.0, // from 0 to 2π, greater than endAngle
-                endAngle: 3.141, // from 0 to 2π, less than startAngle
-                strokeWidth: 24.0, // width of the track
-
-                // required
+                value: _value,
+                min: 0.0,
+                max: 1.0,
+                steps: _steps,
+                offsetRadian: _offset,
+                startAngle: _startAngle,
+                endAngle: _endAngle,
                 radius: 160,
-                value: _value, // a value from 0.0 to 1.0
+                strokeWidth: 42,
+                notchRingOffset: 0.0,
+                trackColor: Colors.grey.shade200,
+                knobSize: const Size.square(50.0),
                 knobBuilder: (context, angle) {
-                  return const Card(
-                    color: Colors.blue,
-                    shape: CircleBorder(),
+                  return Card(
+                    shape: const CircleBorder(
+                      eccentricity: 0.2,
+                      side: BorderSide(
+                        color: Colors.blue,
+                        width: 2.0,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        angle.toStringAsFixed(0),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   );
                 },
                 onChanged: (value) {
-                  // value obtained will always be between 0.0 and 1.0
                   setState(() {
                     _value = value;
                   });
                 },
+                markers: [
+                  ...List.generate(
+                    _steps ~/ 5,
+                    (index) => CircularSliderMarker(
+                      marker: const Icon(Icons.star),
+                      size: const Size.square(24.0),
+                      stepIndex: (index * 5).toDouble(),
+                    ),
+                  ),
+                  const CircularSliderMarker(
+                    marker: Icon(Icons.favorite),
+                    size: Size.square(24.0),
+                    value: 0.1,
+                    lockRotation: false,
+                  ),
+                ],
+                notchGroups: [
+                  ...List.generate(
+                    _steps,
+                    (index) => CircularSliderNotchGroup(
+                      stepIndex: index.toDouble(),
+                      spacing: 16.0,
+                      notches: [
+                        CircularSliderNotch(
+                          radius: _value == (index / _steps) ? 4.0 : 2.0,
+                          color: Colors.blue,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const CircularSliderNotchGroup(
+                    stepIndex: 1,
+                    spacing: 16.0,
+                    notches: [
+                      CircularSliderNotch(
+                        radius: 4.0,
+                        color: Colors.red,
+                        filled: false,
+                        strokeWidth: 2.0,
+                      ),
+                      CircularSliderNotch(radius: 2.0, color: Colors.black),
+                      CircularSliderNotch(radius: 2.0, color: Colors.purple),
+                      CircularSliderNotch(radius: 2.0, color: Colors.orange),
+                    ],
+                  ),
+                  const CircularSliderNotchGroup(
+                    stepIndex: 2,
+                    spacing: 16.0,
+                    notches: [
+                      CircularSliderNotch(radius: 2.0, color: Colors.red),
+                      CircularSliderNotch(radius: 2.0, color: Colors.green),
+                    ],
+                  ),
+                ],
+                segments: const [
+                  CircularSliderSegment(
+                    color: Colors.red,
+                    start: 0,
+                    length: 0.2,
+                    width: 42.0,
+                  ),
+                  CircularSliderSegment(
+                    color: Colors.yellow,
+                    start: 0.2,
+                    length: 0.2,
+                    width: 42.0,
+                  ),
+                  CircularSliderSegment(
+                    color: Colors.green,
+                    start: 0.4,
+                    length: 0.2,
+                    width: 42.0,
+                  ),
+                ],
               ),
             ),
           ),
