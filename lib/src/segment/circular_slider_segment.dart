@@ -2,18 +2,34 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 
+enum GradientMode {
+  /// The gradient follows a closed circle
+  circle,
+
+  /// The gradient follows the length of the arc
+  arc,
+}
+
 @immutable
 class CircularSliderSegment {
-  final Color color;
   final double start;
   final double length;
-  final double width;
+  final double strokeWidth;
+  final StrokeCap strokeCap;
+  final Color? color;
+  final List<Color>? gradientColors;
+  final List<double>? gradientStops;
+  final GradientMode gradientMode;
 
   const CircularSliderSegment({
-    required this.color,
     required this.start,
     required this.length,
-    required this.width,
+    required this.strokeWidth,
+    this.strokeCap = StrokeCap.round,
+    this.color,
+    this.gradientColors,
+    this.gradientStops,
+    this.gradientMode = GradientMode.arc,
   });
 
   @override
@@ -21,14 +37,25 @@ class CircularSliderSegment {
     if (identical(this, other)) return true;
 
     return other is CircularSliderSegment &&
-        other.color == color &&
         other.start == start &&
         other.length == length &&
-        other.width == width;
+        other.strokeWidth == strokeWidth &&
+        other.strokeCap == strokeCap &&
+        other.color == color &&
+        listEquals(other.gradientColors, gradientColors) &&
+        listEquals(other.gradientStops, gradientStops) &&
+        other.gradientMode == gradientMode;
   }
 
   @override
   int get hashCode {
-    return color.hashCode ^ start.hashCode ^ length.hashCode ^ width.hashCode;
+    return start.hashCode ^
+        length.hashCode ^
+        strokeWidth.hashCode ^
+        strokeCap.hashCode ^
+        color.hashCode ^
+        gradientColors.hashCode ^
+        gradientStops.hashCode ^
+        gradientMode.hashCode;
   }
 }
