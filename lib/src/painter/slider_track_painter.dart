@@ -46,8 +46,6 @@ class SliderTrackPainter extends CustomPainter {
     if (gradientColors == null) {
       paint.color = color!;
     } else {
-      print('capRadian: $capRadian');
-
       double gradientEndAngle;
 
       if (gradientMode == GradientMode.circle) {
