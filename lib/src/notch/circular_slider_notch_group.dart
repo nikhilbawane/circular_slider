@@ -15,7 +15,7 @@ class CircularSliderNotchGroup {
 
   /// The value where the notch should be positioned.
   ///
-  /// Must be between 0.0 and 1.0
+  /// Must be between [CircularSlider.min] and [CircularSlider.max].
   ///
   /// Cannot be used with [stepIndex]
   final double? value;
@@ -26,8 +26,7 @@ class CircularSliderNotchGroup {
     this.stepIndex,
     this.value,
   })  : assert(stepIndex != null || value != null),
-        assert(stepIndex == null || value == null),
-        assert(value == null || (value >= 0.0 && value <= 1.0));
+        assert(stepIndex == null || value == null);
 
   @override
   bool operator ==(Object other) {

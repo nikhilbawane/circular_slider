@@ -16,7 +16,7 @@ class CircularSliderMarker {
 
   /// The value where the marker should be positioned.
   ///
-  /// The value must be between 0.0 and 1.0
+  /// The value must be between [CircularSlider.min] and [CircularSlider.max].
   ///
   /// Cannot be used with [stepIndex]
   final double? value;
@@ -28,8 +28,7 @@ class CircularSliderMarker {
     this.stepIndex,
     this.value,
   })  : assert(stepIndex != null || value != null),
-        assert(stepIndex == null || value == null),
-        assert(value == null || (value >= 0.0 && value <= 1.0));
+        assert(stepIndex == null || value == null);
 
   @override
   bool operator ==(Object other) {
