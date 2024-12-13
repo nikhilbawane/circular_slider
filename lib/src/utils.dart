@@ -1,25 +1,26 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:circular_slider/src/constants.dart';
-
 class SliderUtils {
-  /// Normalizes an angle to a value between 0 and [maxAngle].
-  ///
-  /// This function takes an angle in radians and normalizes it to a value
-  /// between 0 and [maxAngle] (defaulting to [fullAngleInRadians] if not
-  /// provided).
-  ///
-  /// The normalization is done by first adding [maxAngle] to the angle to
-  /// ensure it is positive, then taking the remainder modulo [maxAngle] to
-  /// bring it back within the range.
-  ///
-  /// This is useful when dealing with angles that may wrap around the circle,
-  /// such as when incrementing or decrementing an angle value.
-  static double normalizeAngle(double angle, {double? maxAngle}) {
-    final max = maxAngle ?? fullAngleInRadians;
+  const SliderUtils._();
 
-    return (angle % max + max) % max;
+  /// Normalizes a [value] within a specified range.
+  ///
+  /// This function takes a [value] along with a [min] and [max] range,
+  /// and returns the normalized value as a double between 0.0 and 1.0.
+  ///
+  /// - [value]: The value to be normalized.
+  /// - [min]: The minimum bound of the range.
+  /// - [max]: The maximum bound of the range.
+  ///
+  /// Returns a normalized double between 0.0 and 1.0.
+  static double normalize(double min, double max, double value) {
+    if (min == max) {
+      throw ArgumentError('Minimum and maximum values must be different.');
+    }
+    // Clamp the value to the range [min, max]
+    double clampedValue = value.clamp(min, max);
+    return (clampedValue - min) / (max - min);
   }
 
   /// Converts polar coordinates to a Cartesian offset.
@@ -99,16 +100,16 @@ class SliderUtils {
 
   /// Checks if the given [angle] is within the arc from [startAngle] to [endAngle].
   ///
-  /// The angles are all given in radians and are expected to be in the range [0, 2π).
+  /// The angles are all given in radians and are expected to be in the range [0, 2pi).
   /// They are normalized to this range before the check is performed.
   ///
-  /// The check is performed by mapping the angles to the range [0, 2π) and then
+  /// The check is performed by mapping the angles to the range [0, 2pi) and then
   /// checking if the given angle is within the range [start, end].
   ///
   /// If [endAngle] is less than [startAngle], the check is performed in the range
-  /// [start, 2π) and [0, end].
+  /// [start, 2pi) and [0, end].
   static bool isAngleInArc(double angle, double startAngle, double endAngle) {
-    // Normalize all angles to [0, 2π)
+    // Normalize all angles to [0, 2pi)
     double normalize(double a) {
       a = a % (2 * math.pi);
       return a < 0 ? a + 2 * math.pi : a;
@@ -212,9 +213,11 @@ class SliderUtils {
   /// Returns the snapped value.
   static double snapToGrid(
       double value, double min, double max, int divisions) {
-    final normalizedValue = (value - min) / (max - min);
+    final normalizedValue = SliderUtils.normalize(min, max, value);
+
     final discreteValue =
         discretize(normalizedValue.clamp(0.0, 1.0), divisions);
+
     return lerp(min, max, discreteValue);
   }
 }

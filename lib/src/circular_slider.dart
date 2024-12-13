@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import 'constants.dart';
 import 'marker/circular_slider_marker.dart';
@@ -11,22 +11,52 @@ import 'painter/slider_track_painter.dart';
 import 'segment/circular_slider_segment.dart';
 import 'utils.dart';
 
+typedef KnobBuilder = Widget Function(
+  BuildContext context,
+  double angle,
+);
+
+enum InteractionMode {
+  track,
+  knob,
+  both,
+  none;
+
+  bool get hasTrack {
+    return this == InteractionMode.track || this == InteractionMode.both;
+  }
+
+  bool get hasKnob {
+    return this == InteractionMode.knob || this == InteractionMode.both;
+  }
+}
+
 /// CircularSlider widget
 ///
 /// References:
 /// https://www.youtube.com/watch?v=IP0Nn9f2yJs
 /// https://github.com/JideGuru/youtube_videos/blob/master/rainbow_circular_slider/lib/views/circular_slider.dart
 class CircularSlider extends StatefulWidget {
+  /// Value between min and max
   final double value;
+
+  /// The minimum value of the slider
   final double min;
+
+  /// The maximum value of the slider
   final double max;
 
-  final Widget Function(BuildContext, double) knobBuilder;
+  /// Builder for the control knob
+  /// Provides the angle in radians
+  final KnobBuilder knobBuilder;
 
+  /// Called when the slider's value changes
   final void Function(double radian) onChanged;
 
+  /// The number of discrete steps within the range
   final int steps;
 
+  /// The radius of the slider
   final double radius;
 
   /// in radians less than or equal to (pi * 2)
@@ -37,11 +67,13 @@ class CircularSlider extends StatefulWidget {
   /// [startAngle] must be less than [endAngle]
   final double endAngle;
 
+  /// Adjust the rotation of the slider
   final double offsetRadian;
 
   /// List of segments
   final List<CircularSliderSegment>? segments;
 
+  /// List of markers
   final List<CircularSliderMarker>? markers;
 
   /// This requires steps to be greater than 0
@@ -51,7 +83,16 @@ class CircularSlider extends StatefulWidget {
   /// Decreasing brings them closer
   final double notchRingOffset;
 
+  /// Size of the control knob
   final Size knobSize;
+
+  /// Alignment of the knob
+  /// 0 = Center of slider
+  /// 1 = On the slider's track
+  final double knobAlignment;
+
+  /// Tangentially locks the knob's rotation
+  final bool lockKnobRotation;
 
   /// The width of the track and segments
   ///
@@ -60,9 +101,28 @@ class CircularSlider extends StatefulWidget {
   /// So if you notches get hidden by your track, try adjusting [notchRingOffset]
   final double strokeWidth;
 
-  final Color trackColor;
+  /// Stroke cap
+  final StrokeCap strokeCap;
 
+  /// The color of the track
+  final Color? trackColor;
+
+  /// The gradient colors of the track
+  /// [trackGradientColors] and [trackGradientStops] must be of the same length
+  /// This takes precedence over [trackColor]
+  final List<Color>? trackGradientColors;
+
+  /// The gradient stops of the track
+  final List<double>? trackGradientStops;
+
+  /// Controls how the gradient follows the track
+  final GradientMode trackGradientMode;
+
+  /// Show the directional arrow at the end of the track
   final bool showArrow;
+
+  /// Control the value of the slider using track or knob or both
+  final InteractionMode interactionMode;
 
   const CircularSlider({
     super.key,
@@ -81,13 +141,23 @@ class CircularSlider extends StatefulWidget {
     this.notchGroups,
     this.notchRingOffset = 0.0,
     this.knobSize = const Size.square(defaultKnobSize),
+    this.knobAlignment = 1.0,
+    this.lockKnobRotation = false,
     this.strokeWidth = defaultStrokeWidth,
+    this.strokeCap = StrokeCap.round,
     this.trackColor = defaultTrackColor,
+    this.trackGradientColors,
+    this.trackGradientStops,
+    this.trackGradientMode = GradientMode.arc,
     this.showArrow = true,
+    this.interactionMode = InteractionMode.both,
   })  : assert(startAngle <= (math.pi * 2) &&
             endAngle <= (math.pi * 2) &&
             startAngle < endAngle),
-        assert(strokeWidth <= radius / 2);
+        assert(strokeWidth <= radius / 2),
+        assert(trackColor != null || trackGradientColors != null),
+        assert(knobAlignment >= -1.0 && knobAlignment <= 1.0),
+        assert(min != max && min < max);
 
   @override
   State<CircularSlider> createState() => _CircularSliderState();
@@ -110,7 +180,11 @@ class _CircularSliderState extends State<CircularSlider> {
 
     final double angle = SliderUtils.calculateAngle(position, center);
 
-    final capRadians = SliderUtils.lengthToRadians(strokeWidth / 2, radius);
+    double capRadians = SliderUtils.lengthToRadians(strokeWidth / 2, radius);
+
+    if (widget.strokeCap == StrokeCap.butt) {
+      capRadians = 0;
+    }
 
     final arcStart = widget.startAngle + widget.offsetRadian - capRadians;
     final arcEnd = widget.endAngle + widget.offsetRadian + capRadians;
@@ -133,12 +207,38 @@ class _CircularSliderState extends State<CircularSlider> {
       _isDragging = true;
       _knobStartAngle = SliderUtils.calculateAngle(localPosition, center);
       _knobPreviousAngle = _knobStartAngle;
+
+      final normalizedValue =
+          SliderUtils.normalize(widget.min, widget.max, widget.value);
+
       _currentRadian = SliderUtils.lerp(
         widget.startAngle,
         widget.endAngle,
-        widget.value,
+        normalizedValue,
       );
     }
+  }
+
+  void _handleKnobPanStart(DragStartDetails details) {
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final Size size = renderBox.size;
+    final Offset center = size.center(Offset.zero);
+
+    final Offset localPosition =
+        renderBox.globalToLocal(details.globalPosition);
+
+    _isDragging = true;
+    _knobStartAngle = SliderUtils.calculateAngle(localPosition, center);
+    _knobPreviousAngle = _knobStartAngle;
+
+    final normalizedValue =
+        SliderUtils.normalize(widget.min, widget.max, widget.value);
+
+    _currentRadian = SliderUtils.lerp(
+      widget.startAngle,
+      widget.endAngle,
+      normalizedValue,
+    );
   }
 
   void _handlePanUpdate(DragUpdateDetails details) {
@@ -171,11 +271,15 @@ class _CircularSliderState extends State<CircularSlider> {
     final double normalizedValue = (_currentRadian - widget.startAngle) /
         (widget.endAngle - widget.startAngle);
 
-    double newValue = normalizedValue;
+    double newValue = SliderUtils.lerp(
+      widget.min,
+      widget.max,
+      normalizedValue,
+    );
 
     if (widget.steps > 0) {
       newValue = SliderUtils.snapToGrid(
-          normalizedValue, widget.min, widget.max, widget.steps);
+          newValue, widget.min, widget.max, widget.steps);
     }
 
     if (newValue != widget.value) {
@@ -202,24 +306,29 @@ class _CircularSliderState extends State<CircularSlider> {
   }
 
   Widget _buildSliderStack(Offset center) {
-    return GestureDetector(
-      onPanStart: _handlePanStart,
-      onPanUpdate: (details) => _handlePanUpdate(details),
-      onPanEnd: _handlePanEnd,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.center,
-        children: [
-          _buildTrack(),
-          if (widget.showArrow) _buildArrow(),
-          if (widget.notchGroups != null && widget.steps > 0)
-            ..._buildNotches(),
-          if (widget.segments != null) ..._buildSegments(),
-          if (widget.markers != null) ..._buildMarkers(center),
-          _buildKnob(center),
-        ],
-      ),
+    final sliderStack = Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        _buildTrack(),
+        if (widget.showArrow) _buildArrow(),
+        if (widget.notchGroups != null) ..._buildNotches(),
+        if (widget.segments != null) ..._buildSegments(),
+        if (widget.markers != null) ..._buildMarkers(center),
+        _buildKnob(center),
+      ],
     );
+
+    if (widget.interactionMode.hasTrack) {
+      return GestureDetector(
+        onPanStart: _handlePanStart,
+        onPanUpdate: (details) => _handlePanUpdate(details),
+        onPanEnd: _handlePanEnd,
+        child: sliderStack,
+      );
+    } else {
+      return sliderStack;
+    }
   }
 
   Widget _buildTrack() {
@@ -228,10 +337,14 @@ class _CircularSliderState extends State<CircularSlider> {
         offsetRadian: widget.offsetRadian,
         radius: widget.radius,
         strokeWidth: widget.strokeWidth,
+        strokeCap: widget.strokeCap,
         startRadian: widget.startAngle,
         lengthRadian:
             SliderUtils.getRadianLength(widget.startAngle, widget.endAngle),
         color: widget.trackColor,
+        gradientColors: widget.trackGradientColors,
+        gradientStops: widget.trackGradientStops,
+        gradientMode: widget.trackGradientMode,
       ),
       child: Container(),
     );
@@ -262,7 +375,8 @@ class _CircularSliderState extends State<CircularSlider> {
       if (group.stepIndex != null) {
         normalizedPosition = group.stepIndex! / widget.steps;
       } else {
-        normalizedPosition = group.value!;
+        normalizedPosition =
+            SliderUtils.normalize(widget.min, widget.max, group.value!);
       }
 
       // Calculate the notch's position in radians
@@ -299,10 +413,14 @@ class _CircularSliderState extends State<CircularSlider> {
         painter: SliderTrackPainter(
           offsetRadian: widget.offsetRadian,
           radius: widget.radius,
-          strokeWidth: segment.width,
+          strokeWidth: segment.strokeWidth,
           startRadian: widget.startAngle + segment.start * arcLength,
           lengthRadian: segment.length * arcLength,
           color: segment.color,
+          gradientColors: segment.gradientColors,
+          gradientStops: segment.gradientStops,
+          gradientMode: segment.gradientMode,
+          strokeCap: segment.strokeCap,
         ),
         child: Container(),
       );
@@ -317,7 +435,8 @@ class _CircularSliderState extends State<CircularSlider> {
       if (marker.stepIndex != null) {
         normalizedPosition = marker.stepIndex! / widget.steps;
       } else {
-        normalizedPosition = marker.value!;
+        normalizedPosition =
+            SliderUtils.normalize(widget.min, widget.max, marker.value!);
       }
 
       // Calculate the marker's position in radians
@@ -355,25 +474,59 @@ class _CircularSliderState extends State<CircularSlider> {
   }
 
   Widget _buildKnob(Offset center) {
-    final totalAngle = widget.endAngle - widget.startAngle;
+    final normalizedValue =
+        SliderUtils.normalize(widget.min, widget.max, widget.value);
 
-    final handleAngle =
-        widget.offsetRadian + widget.startAngle + (totalAngle * widget.value);
-    final handleCenter = SliderUtils.toPolar(
-      center - Offset(widget.knobSize.width / 2, widget.knobSize.height / 2),
-      handleAngle,
-      widget.radius,
+    // Calculate the knob's position in radians
+    final knobRadian = SliderUtils.lerp(
+      widget.startAngle,
+      widget.endAngle,
+      normalizedValue,
     );
 
+    // Adjust with offsetRadian and normalize to [0, 2pi]
+    final adjustedRadian = (knobRadian + widget.offsetRadian) % (2 * math.pi);
+
+    final effectiveRadius = widget.radius * widget.knobAlignment;
+
+    final pos = SliderUtils.toPolar(
+      center,
+      adjustedRadian,
+      effectiveRadius,
+    );
+
+    final tangentAngle =
+        SliderUtils.getTangentAngle(center, pos, effectiveRadius);
+
     return Positioned(
-      left: handleCenter.dx,
-      top: handleCenter.dy,
+      left: pos.dx - widget.knobSize.width / 2,
+      top: pos.dy - widget.knobSize.height / 2,
       width: widget.knobSize.width,
       height: widget.knobSize.height,
-      child: widget.knobBuilder(
-        context,
-        SliderUtils.radianToAngle(handleAngle - widget.offsetRadian),
-      ),
+      child: Builder(builder: (context) {
+        Widget knob = widget.knobBuilder(
+          context,
+          adjustedRadian,
+        );
+
+        if (widget.interactionMode.hasKnob) {
+          knob = GestureDetector(
+            onPanStart: _handleKnobPanStart,
+            onPanUpdate: _handlePanUpdate,
+            onPanEnd: _handlePanEnd,
+            child: knob,
+          );
+        }
+
+        if (widget.lockKnobRotation) {
+          knob = Transform.rotate(
+            angle: tangentAngle,
+            child: knob,
+          );
+        }
+
+        return knob;
+      }),
     );
   }
 }
