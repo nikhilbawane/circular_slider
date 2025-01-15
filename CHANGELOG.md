@@ -23,3 +23,10 @@
 - Added InteractionMode to control using slider's track or knob
 - Fixed logic for value between non-default min & max
 - Updated SliderUtils functions
+
+## 0.1.0
+
+* Gradient colors support for track and segments
+* New `CircularSliderTrack` class for all track properties
+* Renamed all `strokeWidth` fields to `width`
+* Fixed Segment length calculation

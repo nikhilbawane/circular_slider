@@ -20,7 +20,7 @@ Add
 
 ```
 dependencies:
-  circular_slider: ^0.0.3
+  circular_slider: ^0.1.0
 ```
 
 to your `pubspec.yaml`, and run
@@ -37,11 +37,16 @@ Here is a basic usage of the widget:
 
 ```dart
 CircularSlider(
+  min: 0.0, // lower limit of value
+  max: 1.0, // upper limit of value
   startAngle: 0.0, // from 0 to 2π, greater than endAngle
   endAngle: 3.141, // from 0 to 2π, less than startAngle
-  strokeWidth: 24.0, // width of the track
+  track: CircularSliderTrack(
+    color: Colors.grey.shade200, // track color
+    width: 24.0, // track width
+  ),
 
-  // required
+  // below parameters are required
   radius: 160,
   value: _value, // a value from 0.0 to 1.0
   knobBuilder: (context, angle) {
@@ -51,7 +56,7 @@ CircularSlider(
     );
   },
   onChanged: (value) {
-    // value obtained will always be between 0.0 and 1.0
+    // value obtained will always be between [min] and [max]
     setState(() {
       _value = value;
     });
@@ -62,6 +67,19 @@ CircularSlider(
 The above implementation will look like this:
 
 ![Basic Usage](./assets/usage_1.png)
+
+### CircularSliderTrack
+
+Segments can help you display different value ranges on your Slider.
+
+| Parameter | DataType | Description |
+| ------ | ------ | ------ |
+| color | Color | Color of the segment |
+| width | double | Width of the segment |
+| strokeCap | StrokeCap | The stroke cap of the track |
+| gradientColors | List<Color\>? | Colors for gradient fill |
+| gradientStops | List<double\>? | The gradient stop values |
+| GradientMode | GradientMode | Controls how the gradient follows the track |
 
 ### Segments, Markers and Notches
 
@@ -85,6 +103,9 @@ Segments can help you display different value ranges on your Slider.
 | start | double | value from 0.0 to 1.0 |
 | length | double | length of the segment proportional to the length of the Slider |
 | width | double | Width of the segment |
+| gradientColors | List<Color\>? | Colors for gradient fill |
+| gradientStops | List<double\>? | The gradient stop values |
+| GradientMode | GradientMode | Controls how the gradient follows the segment |
 
 #### CircularSliderMarker
 
@@ -122,4 +143,4 @@ An individual notch in you notch group.
 | radius | double | The radius of the notch circle/dot |
 | color | Color | The notch's color |
 | filled | bool | Whether the notch dot should be filled or outlined  |
-| strokeWidth | double | Width of the outline. |
+| width | double | Width of the outline. |
