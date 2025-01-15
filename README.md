@@ -20,7 +20,7 @@ Add
 
 ```
 dependencies:
-  circular_slider: ^0.1.0
+  circular_slider: ^0.1.1
 ```
 
 to your `pubspec.yaml`, and run
@@ -74,9 +74,9 @@ Segments can help you display different value ranges on your Slider.
 
 | Parameter | DataType | Description |
 | ------ | ------ | ------ |
-| color | Color | Color of the segment |
-| width | double | Width of the segment |
-| strokeCap | StrokeCap | The stroke cap of the track |
+| color | Color | Color of the track |
+| width | double | Width of the track |
+| strokeCap | StrokeCap | The stroke cap of the track (round or squared) |
 | gradientColors | List<Color\>? | Colors for gradient fill |
 | gradientStops | List<double\>? | The gradient stop values |
 | GradientMode | GradientMode | Controls how the gradient follows the track |
@@ -101,7 +101,7 @@ Segments can help you display different value ranges on your Slider.
 | ------ | ------ | ------ |
 | color | Color | Color of the segment |
 | start | double | value from 0.0 to 1.0 |
-| length | double | length of the segment proportional to the length of the Slider |
+| length | double | value from 0.0 to 1.0, length of the segment proportional to the length of the Slider |
 | width | double | Width of the segment |
 | gradientColors | List<Color\>? | Colors for gradient fill |
 | gradientStops | List<double\>? | The gradient stop values |
