@@ -389,7 +389,9 @@ class _HomePageState extends State<HomePage> {
 
     bool inRegion = false;
 
-    if (_value3 >= (0.25 * max) && _value3 <= (0.75 * max)) {
+    final normalizedValue = SliderUtils.normalize(min, max, _value3);
+
+    if (normalizedValue >= 0.25 && normalizedValue <= 0.75) {
       inRegion = true;
     }
 
@@ -421,11 +423,11 @@ class _HomePageState extends State<HomePage> {
           _value3 = value;
         });
       },
-      segments: [
+      segments: const [
         CircularSliderSegment(
           color: Colors.white,
           start: 0.25,
-          length: SliderUtils.lerp(min, max, 0.5),
+          length: 0.50,
           width: 4.0,
         ),
       ],
@@ -436,10 +438,12 @@ class _HomePageState extends State<HomePage> {
     const min = 0.0;
     const max = 35.0;
 
+    final normalizedValue = SliderUtils.normalize(min, max, _value4);
+
     final notchColor = Color.lerp(
           Colors.pink,
           Colors.purple,
-          SliderUtils.normalize(min, max, _value4),
+          normalizedValue,
         ) ??
         Colors.red;
 
@@ -494,7 +498,7 @@ class _HomePageState extends State<HomePage> {
           gradientColors: const [Colors.pink, Colors.purple],
           gradientMode: GradientMode.circle,
           start: 0.0,
-          length: _value4,
+          length: normalizedValue,
           width: 42.0,
         ),
       ],
