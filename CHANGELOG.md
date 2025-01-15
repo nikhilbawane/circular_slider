@@ -30,3 +30,8 @@
 * New `CircularSliderTrack` class for all track properties
 * Renamed all `strokeWidth` fields to `width`
 * Fixed Segment length calculation
+
+## 0.1.1
+
+* Updated CircularSliderSegment to use normalized values
+* Updated README.md
