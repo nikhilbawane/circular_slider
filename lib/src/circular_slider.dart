@@ -385,13 +385,17 @@ class _CircularSliderState extends State<CircularSlider> {
         SliderUtils.getRadianLength(widget.startAngle, widget.endAngle);
 
     return widget.segments!.map((segment) {
+      // Normalize notch length proportional to [min] and [max]
+      final normalizedLength =
+          SliderUtils.normalize(widget.min, widget.max, segment.length);
+
       return CustomPaint(
         painter: SliderTrackPainter(
           offsetRadian: widget.offsetRadian,
           radius: widget.radius,
           strokeWidth: segment.width,
           startRadian: widget.startAngle + segment.start * arcLength,
-          lengthRadian: segment.length * arcLength,
+          lengthRadian: normalizedLength * arcLength,
           color: segment.color,
           gradientColors: segment.gradientColors,
           gradientStops: segment.gradientStops,

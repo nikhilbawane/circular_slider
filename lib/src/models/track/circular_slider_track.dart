@@ -23,15 +23,15 @@ class CircularSliderTrack {
   /// The color of the track
   final Color? color;
 
-  /// The gradient colors of the segment
+  /// The gradient colors of the track
   /// [gradientColors] and [gradientStops] must be of the same length
   /// This takes precedence over [color]
   final List<Color>? gradientColors;
 
-  /// The gradient stops of the segment
+  /// The gradient stops of the track
   final List<double>? gradientStops;
 
-  /// Controls how the gradient follows the segment
+  /// Controls how the gradient follows the track
   final GradientMode gradientMode;
 
   const CircularSliderTrack({

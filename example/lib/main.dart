@@ -384,16 +384,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildSlider3() {
+    const min = 0.0;
+    const max = 50.0;
+
     bool inRegion = false;
 
-    if (_value3 >= (0.25 * 50) && _value3 <= (0.75 * 50)) {
+    if (_value3 >= (0.25 * max) && _value3 <= (0.75 * max)) {
       inRegion = true;
     }
 
     return CircularSlider(
       value: _value3,
-      min: 0.0,
-      max: 50.0,
+      min: min,
+      max: max,
       steps: _steps,
       offsetRadian: _offset,
       startAngle: _startAngle,
@@ -418,11 +421,11 @@ class _HomePageState extends State<HomePage> {
           _value3 = value;
         });
       },
-      segments: const [
+      segments: [
         CircularSliderSegment(
           color: Colors.white,
           start: 0.25,
-          length: 0.5,
+          length: SliderUtils.lerp(min, max, 0.5),
           width: 4.0,
         ),
       ],
@@ -430,17 +433,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildSlider4() {
+    const min = 0.0;
+    const max = 35.0;
+
     final notchColor = Color.lerp(
           Colors.pink,
           Colors.purple,
-          _value4,
+          SliderUtils.normalize(min, max, _value4),
         ) ??
         Colors.red;
 
     return CircularSlider(
       value: _value4,
-      min: 0.0,
-      max: 1.0,
+      min: min,
+      max: max,
       steps: _steps,
       offsetRadian: _offset,
       startAngle: _startAngle,
