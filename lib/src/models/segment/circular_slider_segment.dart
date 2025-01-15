@@ -8,7 +8,7 @@ import '../enums.dart';
 class CircularSliderSegment {
   /// normalized value between 0.0 to 1.0, <br>
   /// representing a value proportional between [CircularSlider.min] and [CircularSlider.max]
-  /// 
+  ///
   /// example:
   /// min = 0.0, max = 100.0, value = 50.0
   /// min = 10.0, max = 50.0, value = 30.0

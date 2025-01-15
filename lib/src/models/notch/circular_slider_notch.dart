@@ -46,9 +46,6 @@ class CircularSliderNotch {
 
   @override
   int get hashCode {
-    return radius.hashCode ^
-        color.hashCode ^
-        filled.hashCode ^
-        width.hashCode;
+    return radius.hashCode ^ color.hashCode ^ filled.hashCode ^ width.hashCode;
   }
 }
