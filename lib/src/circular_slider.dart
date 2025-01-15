@@ -3,12 +3,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
-import 'marker/circular_slider_marker.dart';
-import 'notch/circular_slider_notch_group.dart';
+import 'models/enums.dart';
+import 'models/models.dart';
 import 'painter/slider_arrow_painter.dart';
 import 'painter/slider_notch_painter.dart';
 import 'painter/slider_track_painter.dart';
-import 'segment/circular_slider_segment.dart';
 import 'utils.dart';
 
 typedef KnobBuilder = Widget Function(
@@ -70,6 +69,9 @@ class CircularSlider extends StatefulWidget {
   /// Adjust the rotation of the slider
   final double offsetRadian;
 
+  /// Slider track parameters
+  final CircularSliderTrack track;
+
   /// List of segments
   final List<CircularSliderSegment>? segments;
 
@@ -94,30 +96,6 @@ class CircularSlider extends StatefulWidget {
   /// Tangentially locks the knob's rotation
   final bool lockKnobRotation;
 
-  /// The width of the track and segments
-  ///
-  /// This also affects the starting radius of the notches:
-  /// Notch Starting Radius = [radius] - [strokeWidth] + [notchRingOffset]
-  /// So if you notches get hidden by your track, try adjusting [notchRingOffset]
-  final double strokeWidth;
-
-  /// Stroke cap
-  final StrokeCap strokeCap;
-
-  /// The color of the track
-  final Color? trackColor;
-
-  /// The gradient colors of the track
-  /// [trackGradientColors] and [trackGradientStops] must be of the same length
-  /// This takes precedence over [trackColor]
-  final List<Color>? trackGradientColors;
-
-  /// The gradient stops of the track
-  final List<double>? trackGradientStops;
-
-  /// Controls how the gradient follows the track
-  final GradientMode trackGradientMode;
-
   /// Show the directional arrow at the end of the track
   final bool showArrow;
 
@@ -136,6 +114,12 @@ class CircularSlider extends StatefulWidget {
     this.startAngle = 0.0,
     this.endAngle = math.pi * 2.0,
     this.offsetRadian = 0.0,
+    this.track = const CircularSliderTrack(
+      color: defaultTrackColor,
+      strokeWidth: defaultStrokeWidth,
+      strokeCap: StrokeCap.round,
+      gradientMode: GradientMode.arc,
+    ),
     this.segments,
     this.markers,
     this.notchGroups,
@@ -143,19 +127,11 @@ class CircularSlider extends StatefulWidget {
     this.knobSize = const Size.square(defaultKnobSize),
     this.knobAlignment = 1.0,
     this.lockKnobRotation = false,
-    this.strokeWidth = defaultStrokeWidth,
-    this.strokeCap = StrokeCap.round,
-    this.trackColor = defaultTrackColor,
-    this.trackGradientColors,
-    this.trackGradientStops,
-    this.trackGradientMode = GradientMode.arc,
     this.showArrow = true,
     this.interactionMode = InteractionMode.both,
   })  : assert(startAngle <= (math.pi * 2) &&
             endAngle <= (math.pi * 2) &&
             startAngle < endAngle),
-        assert(strokeWidth <= radius / 2),
-        assert(trackColor != null || trackGradientColors != null),
         assert(knobAlignment >= -1.0 && knobAlignment <= 1.0),
         assert(min != max && min < max);
 
@@ -182,7 +158,7 @@ class _CircularSliderState extends State<CircularSlider> {
 
     double capRadians = SliderUtils.lengthToRadians(strokeWidth / 2, radius);
 
-    if (widget.strokeCap == StrokeCap.butt) {
+    if (widget.track.strokeCap == StrokeCap.butt) {
       capRadians = 0;
     }
 
@@ -203,7 +179,7 @@ class _CircularSliderState extends State<CircularSlider> {
     final Offset localPosition =
         renderBox.globalToLocal(details.globalPosition);
 
-    if (_isInHitArea(localPosition, center, radius, widget.strokeWidth)) {
+    if (_isInHitArea(localPosition, center, radius, widget.track.strokeWidth)) {
       _isDragging = true;
       _knobStartAngle = SliderUtils.calculateAngle(localPosition, center);
       _knobPreviousAngle = _knobStartAngle;
@@ -336,15 +312,15 @@ class _CircularSliderState extends State<CircularSlider> {
       painter: SliderTrackPainter(
         offsetRadian: widget.offsetRadian,
         radius: widget.radius,
-        strokeWidth: widget.strokeWidth,
-        strokeCap: widget.strokeCap,
+        strokeWidth: widget.track.strokeWidth,
+        strokeCap: widget.track.strokeCap,
         startRadian: widget.startAngle,
         lengthRadian:
             SliderUtils.getRadianLength(widget.startAngle, widget.endAngle),
-        color: widget.trackColor,
-        gradientColors: widget.trackGradientColors,
-        gradientStops: widget.trackGradientStops,
-        gradientMode: widget.trackGradientMode,
+        color: widget.track.color,
+        gradientColors: widget.track.gradientColors,
+        gradientStops: widget.track.gradientStops,
+        gradientMode: widget.track.gradientMode,
       ),
       child: Container(),
     );
@@ -393,7 +369,8 @@ class _CircularSliderState extends State<CircularSlider> {
       return CustomPaint(
         painter: SliderNotchPainter(
           notches: group.notches,
-          radius: widget.radius - widget.strokeWidth + widget.notchRingOffset,
+          radius:
+              widget.radius - widget.track.strokeWidth + widget.notchRingOffset,
           radian: adjustedRadian,
           spacing: group.spacing,
           offsetRadian:

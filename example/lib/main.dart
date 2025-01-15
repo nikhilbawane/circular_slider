@@ -78,6 +78,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 16.0),
                   Expanded(
                     child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
                       children: [
                         _buildSlider1(),
                         _buildSlider2(),
@@ -214,9 +215,11 @@ class _HomePageState extends State<HomePage> {
       startAngle: _startAngle,
       endAngle: _endAngle,
       radius: 160,
-      strokeWidth: 42,
       notchRingOffset: 0.0,
-      trackColor: Colors.grey.shade200,
+      track: CircularSliderTrack(
+        color: Colors.grey.shade200,
+        strokeWidth: 42.0,
+      ),
       knobSize: const Size.square(50.0),
       knobBuilder: (context, angle) {
         return Card(
@@ -327,9 +330,11 @@ class _HomePageState extends State<HomePage> {
       startAngle: _startAngle,
       endAngle: _endAngle,
       radius: 160,
-      strokeWidth: 42,
       notchRingOffset: 84.0,
-      trackColor: Colors.grey.shade200,
+      track: CircularSliderTrack(
+        color: Colors.grey.shade200,
+        strokeWidth: 42.0,
+      ),
       knobSize: const Size(32.0, 64.0),
       knobAlignment: 0.5,
       lockKnobRotation: true,
@@ -394,9 +399,11 @@ class _HomePageState extends State<HomePage> {
       startAngle: _startAngle,
       endAngle: _endAngle,
       radius: 160,
-      strokeWidth: 42,
       notchRingOffset: 84.0,
-      trackColor: Colors.red,
+      track: const CircularSliderTrack(
+        color: Colors.red,
+        strokeWidth: 42.0,
+      ),
       showArrow: false,
       interactionMode: InteractionMode.both,
       knobSize: inRegion ? const Size.square(72.0) : const Size.square(42.0),
@@ -439,8 +446,10 @@ class _HomePageState extends State<HomePage> {
       startAngle: _startAngle,
       endAngle: _endAngle,
       radius: 160,
-      strokeWidth: 42,
-      trackColor: Colors.grey.shade200,
+      track: CircularSliderTrack(
+        color: Colors.grey.shade200,
+        strokeWidth: 42.0,
+      ),
       showArrow: false,
       interactionMode: InteractionMode.knob,
       knobSize: const Size.square(42.0),

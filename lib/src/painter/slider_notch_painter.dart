@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
-import '../notch/circular_slider_notch.dart';
+import '../models/models.dart';
 
 class SliderNotchPainter extends CustomPainter {
   final List<CircularSliderNotch> notches;

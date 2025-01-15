@@ -1,5 +1,6 @@
-import 'package:circular_slider/circular_slider.dart';
 import 'package:flutter/rendering.dart';
+
+import '../models/enums.dart';
 
 class SliderTrackPainter extends CustomPainter {
   final double offsetRadian;
