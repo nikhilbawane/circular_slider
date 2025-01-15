@@ -116,7 +116,7 @@ class CircularSlider extends StatefulWidget {
     this.offsetRadian = 0.0,
     this.track = const CircularSliderTrack(
       color: defaultTrackColor,
-      strokeWidth: defaultStrokeWidth,
+      width: defaultStrokeWidth,
       strokeCap: StrokeCap.round,
       gradientMode: GradientMode.arc,
     ),
@@ -179,7 +179,7 @@ class _CircularSliderState extends State<CircularSlider> {
     final Offset localPosition =
         renderBox.globalToLocal(details.globalPosition);
 
-    if (_isInHitArea(localPosition, center, radius, widget.track.strokeWidth)) {
+    if (_isInHitArea(localPosition, center, radius, widget.track.width)) {
       _isDragging = true;
       _knobStartAngle = SliderUtils.calculateAngle(localPosition, center);
       _knobPreviousAngle = _knobStartAngle;
@@ -312,7 +312,7 @@ class _CircularSliderState extends State<CircularSlider> {
       painter: SliderTrackPainter(
         offsetRadian: widget.offsetRadian,
         radius: widget.radius,
-        strokeWidth: widget.track.strokeWidth,
+        strokeWidth: widget.track.width,
         strokeCap: widget.track.strokeCap,
         startRadian: widget.startAngle,
         lengthRadian:
@@ -369,8 +369,7 @@ class _CircularSliderState extends State<CircularSlider> {
       return CustomPaint(
         painter: SliderNotchPainter(
           notches: group.notches,
-          radius:
-              widget.radius - widget.track.strokeWidth + widget.notchRingOffset,
+          radius: widget.radius - widget.track.width + widget.notchRingOffset,
           radian: adjustedRadian,
           spacing: group.spacing,
           offsetRadian:
@@ -390,7 +389,7 @@ class _CircularSliderState extends State<CircularSlider> {
         painter: SliderTrackPainter(
           offsetRadian: widget.offsetRadian,
           radius: widget.radius,
-          strokeWidth: segment.strokeWidth,
+          strokeWidth: segment.width,
           startRadian: widget.startAngle + segment.start * arcLength,
           lengthRadian: segment.length * arcLength,
           color: segment.color,

@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> {
       notchRingOffset: 0.0,
       track: CircularSliderTrack(
         color: Colors.grey.shade200,
-        strokeWidth: 42.0,
+        width: 42.0,
       ),
       knobSize: const Size.square(50.0),
       knobBuilder: (context, angle) {
@@ -281,7 +281,7 @@ class _HomePageState extends State<HomePage> {
               radius: 4.0,
               color: Colors.red,
               filled: false,
-              strokeWidth: 2.0,
+              width: 2.0,
             ),
             CircularSliderNotch(radius: 2.0, color: Colors.black),
             CircularSliderNotch(radius: 2.0, color: Colors.purple),
@@ -302,19 +302,19 @@ class _HomePageState extends State<HomePage> {
           color: Colors.red,
           start: 0,
           length: 0.2,
-          strokeWidth: 42.0,
+          width: 42.0,
         ),
         CircularSliderSegment(
           color: Colors.yellow,
           start: 0.2,
           length: 0.2,
-          strokeWidth: 42.0,
+          width: 42.0,
         ),
         CircularSliderSegment(
           color: Colors.green,
           start: 0.4,
           length: 0.2,
-          strokeWidth: 42.0,
+          width: 42.0,
         ),
       ],
     );
@@ -333,7 +333,7 @@ class _HomePageState extends State<HomePage> {
       notchRingOffset: 84.0,
       track: CircularSliderTrack(
         color: Colors.grey.shade200,
-        strokeWidth: 42.0,
+        width: 42.0,
       ),
       knobSize: const Size(32.0, 64.0),
       knobAlignment: 0.5,
@@ -377,7 +377,7 @@ class _HomePageState extends State<HomePage> {
           color: Colors.blue,
           start: 0,
           length: _value2.clamp(0.00001, 1.0),
-          strokeWidth: 42.0,
+          width: 42.0,
         ),
       ],
     );
@@ -402,7 +402,7 @@ class _HomePageState extends State<HomePage> {
       notchRingOffset: 84.0,
       track: const CircularSliderTrack(
         color: Colors.red,
-        strokeWidth: 42.0,
+        width: 42.0,
       ),
       showArrow: false,
       interactionMode: InteractionMode.both,
@@ -423,7 +423,7 @@ class _HomePageState extends State<HomePage> {
           color: Colors.white,
           start: 0.25,
           length: 0.5,
-          strokeWidth: 4.0,
+          width: 4.0,
         ),
       ],
     );
@@ -448,7 +448,7 @@ class _HomePageState extends State<HomePage> {
       radius: 160,
       track: CircularSliderTrack(
         color: Colors.grey.shade200,
-        strokeWidth: 42.0,
+        width: 42.0,
       ),
       showArrow: false,
       interactionMode: InteractionMode.knob,
@@ -489,7 +489,7 @@ class _HomePageState extends State<HomePage> {
           gradientMode: GradientMode.circle,
           start: 0.0,
           length: _value4,
-          strokeWidth: 42.0,
+          width: 42.0,
         ),
       ],
     );

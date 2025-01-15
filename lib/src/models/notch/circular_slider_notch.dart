@@ -10,26 +10,26 @@ class CircularSliderNotch {
 
   final bool filled;
 
-  final double strokeWidth;
+  final double width;
 
   const CircularSliderNotch({
     required this.radius,
     required this.color,
     this.filled = true,
-    this.strokeWidth = 1.0,
+    this.width = 1.0,
   });
 
   CircularSliderNotch copyWith({
     double? radius,
     Color? color,
     bool? filled,
-    double? strokeWidth,
+    double? width,
   }) {
     return CircularSliderNotch(
       radius: radius ?? this.radius,
       color: color ?? this.color,
       filled: filled ?? this.filled,
-      strokeWidth: strokeWidth ?? this.strokeWidth,
+      width: width ?? this.width,
     );
   }
 
@@ -41,7 +41,7 @@ class CircularSliderNotch {
         other.radius == radius &&
         other.color == color &&
         other.filled == filled &&
-        other.strokeWidth == strokeWidth;
+        other.width == width;
   }
 
   @override
@@ -49,6 +49,6 @@ class CircularSliderNotch {
     return radius.hashCode ^
         color.hashCode ^
         filled.hashCode ^
-        strokeWidth.hashCode;
+        width.hashCode;
   }
 }

@@ -29,7 +29,7 @@ class SliderNotchPainter extends CustomPainter {
 
       final paint = Paint()
         ..color = notch.color
-        ..strokeWidth = notch.strokeWidth
+        ..strokeWidth = notch.width
         ..style = notch.filled ? PaintingStyle.fill : PaintingStyle.stroke;
 
       final notchRadius = radius - (spacing * i);

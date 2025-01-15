@@ -12,8 +12,13 @@ class CircularSliderSegment {
   /// value between [CircularSlider.min] to [CircularSlider.max]
   final double length;
 
-  final double strokeWidth;
+  /// width of the segment
+  final double width;
+
+  /// stroke cap of the segment
   final StrokeCap strokeCap;
+
+  /// The color of the segment
   final Color? color;
 
   /// The gradient colors of the segment
@@ -30,7 +35,7 @@ class CircularSliderSegment {
   const CircularSliderSegment({
     required this.start,
     required this.length,
-    required this.strokeWidth,
+    required this.width,
     this.strokeCap = StrokeCap.round,
     this.color,
     this.gradientColors,
@@ -45,7 +50,7 @@ class CircularSliderSegment {
     return other is CircularSliderSegment &&
         other.start == start &&
         other.length == length &&
-        other.strokeWidth == strokeWidth &&
+        other.width == width &&
         other.strokeCap == strokeCap &&
         other.color == color &&
         listEquals(other.gradientColors, gradientColors) &&
@@ -57,7 +62,7 @@ class CircularSliderSegment {
   int get hashCode {
     return start.hashCode ^
         length.hashCode ^
-        strokeWidth.hashCode ^
+        width.hashCode ^
         strokeCap.hashCode ^
         color.hashCode ^
         gradientColors.hashCode ^
